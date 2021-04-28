@@ -1,0 +1,15 @@
+public/js/
+public/css/
+*.iml
+.cpcache
+.shadow-cljs
+node_modules
+.clj-kondo
+.netlify/
+.zprintc
+.DS_Store
+.gitignore.swp
+.idea/
+.vs
+public/.DS_Store
+.lsp/sqlite.db
