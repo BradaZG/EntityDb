@@ -18,11 +18,12 @@
    :keechma/controllers
    {:router       {:keechma.controller/params true
                    :keechma.controller/type   :keechma/router
-                   :keechma/routes            [["" {:page "offers"}] ":page" ":page/:subpage"]}
+                   :keechma/routes            [["" {:page "home"}] ":page" ":page/:subpage"]}
 
     :entitydb #:keechma.controller {:params true
                                     :type :keechma/entitydb
-                                    :keechma.entitydb/schema   {:user {:entitydb/relations {:languages {:entitydb.relation/path [:languages :*]
-                                                                                                        :entitydb.relation/type :language}}}}}
+                                    :keechma.entitydb/schema   {:user {:entitydb/relations {:programming-languages {:entitydb.relation/path [:programming-language :*]
+                                                                                                                    :entitydb.relation/type :programming-language}}}}
+                                    }
     :test #:keechma.controller {:params true
                                 :deps [:entitydb]}}})
