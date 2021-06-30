@@ -7,10 +7,12 @@
             [keechma.entitydb.query :as q]
             [datascript.core :as d]
             [datascript.db :as db]
+            [autonormal.core :as a]
             [keechma.pipelines.core :as pp :refer-macros [pipeline!]]))
 
 (derive :test ::pipelines/controller)
 
+;; ENTITY DB examples
 (def print-entity-state
   (pipeline! [value {:keys [deps-state* state*] :as ctrl}]
              (let [entitydb (:entitydb @deps-state*)]
@@ -75,7 +77,7 @@
                                                                       :programming-language [{:id 1} {:id 3}]})
                (ctrl/dispatch ctrl :test :print-entity-state))))
 
-
+;; DATASCRIPT EXAMPLES
 (def batman
   (d/db-with
    (db/empty-db {:name    {:db/unique      :db.unique/identity}
@@ -192,10 +194,39 @@
                :user/parent [[:user/id "4"]
                              [:user/id "5"]]}])
 
+;; AUTONORMAL EXAMPLES
+(def data
+  {:person/id 0 :person/name "Rachel"
+   :friend/list [{:person/id 1 :person/name "Marco"}
+                 {:person/id 2 :person/name "Cassie"}
+                 {:person/id 3 :person/name "Jake"}
+                 {:person/id 4 :person/name "Tobias"}
+                 {:person/id 5 :person/name "Ax"}]})
+
+;; you can pass in multiple entities to instantiate a db, so `a/db` gets a vector
+(def an-one (a/db [data]))
+
+;; Marco and Jake are each others best friend
+(def an-two
+  (a/add an-one {:person/id 1
+                 :friend/best {:person/id 3
+                               :friend/best {:person/id 1}}}))
+
+(def an-three
+  (a/add an-two {:species {:andalites [{:person/id 5
+                                        :person/species "andalite"}]}}))
+
+(def query '[{[:person/id 0] [:person/id
+                              :person/name
+                              {:friend/list ...}]}])
+
+
 (def start
   (pipeline! [value {:keys [deps-state* state*] :as ctrl}]
              (let [entitydb (:entitydb @deps-state*)]
                (pipeline! [value ctrl]
+
+                          ;; ENTITYDB
                           (ctrl/dispatch ctrl :test :insert-named)
                           (p/delay 3000)
                           (ctrl/dispatch ctrl :test :insert-collection)
@@ -205,6 +236,7 @@
                           (p/delay 500)
                           (ctrl/dispatch ctrl :test :schema-test)
 
+                          ;; DATASCRIPT
                           (l/pp batman)
                           (l/pp parker-family)
 
@@ -215,7 +247,7 @@
                                    :where
                                    [?e :name ?name]]
                                  parker-family))
-                          
+
                           ; who is Peter Parker uncle
                           (l/pp (d/q
                                  '[:find [?uncle-name ...]
@@ -299,7 +331,20 @@
                                        :where
                                        [?e :user/id]
                                        [?e :user/name ?n]]
-                                     @conn-three))))))
+                                     @conn-three))
+
+                          ;;AUTONORMAL
+                          (l/pp an-one)
+                          (l/pp (get-in an-one [:person/id 1]))
+                          (l/pp an-two)
+                          (l/pp an-three)
+                          (l/pp (a/pull an-three [[:person/id 1]]))
+                          (l/pp (a/pull an-three [{[:person/id 1] [:person/name
+                                                                   {:friend/best [:person/name]}]}]))
+                          (l/pp (a/pull an-three [{:species [{:andalites [:person/name]}]}]))
+                          (l/pp (= (-> (a/pull an-three query)
+                                       (get [:person/id 0]))
+                                   data))))))
 
 (def pipelines
   {:keechma.on/start start
@@ -315,3 +360,4 @@
 
 (defmethod ctrl/derive-state :test [_ state _]
   state)
+
