@@ -208,6 +208,14 @@
                           (l/pp batman)
                           (l/pp parker-family)
 
+                          ; get all the names associated with all the entities in the database
+                          (l/pp (d/q
+                                 '[:find ?name
+                                   :in $
+                                   :where
+                                   [?e :name ?name]]
+                                 parker-family))
+                          
                           ; who is Peter Parker uncle
                           (l/pp (d/q
                                  '[:find [?uncle-name ...]
