@@ -30,52 +30,47 @@
 
 (def insert-named
   (pipeline! [value {:keys [deps-state* state*] :as ctrl}]
-             (let [entitydb (:entitydb @deps-state*)]
-               (println "----------------> INSERT NAMED")
-               (edb/insert-named! ctrl :entitydb :user :user/current {:id 1 :name "Domagoj" :lastname "Marusic"})
-               (edb/insert-named! ctrl :entitydb :user :user/active {:id 2 :name "Marko" :lastname "Ivic"})
-               (edb/insert-entity! ctrl :entitydb :user {:id 2 :nickname "Max" :age "35"})
+             (println "----------------> INSERT NAMED")
+             (edb/insert-named! ctrl :entitydb :user :user/current {:id 1 :name "Domagoj" :lastname "Marusic"})
+             (edb/insert-named! ctrl :entitydb :user :user/active {:id 2 :name "Marko" :lastname "Ivic"})
+             (edb/insert-entity! ctrl :entitydb :user {:id 2 :nickname "Max" :age "35"})
                ;(edb/insert-named! ctrl :entitydb :user :user/active {:id 2 :name "Tin Two Active" :lastname "Levacic"})
-               (ctrl/dispatch ctrl :test :print-entity-state))))
+             (ctrl/dispatch ctrl :test :print-entity-state)))
 
 (def insert-collection
   (pipeline! [value {:keys [deps-state* state*] :as ctrl}]
-             (let [entitydb (:entitydb @deps-state*)]
-               (println "----------------> INSERT COLLECTION")
-               (edb/insert-collection! ctrl :entitydb :user :user/list [{:id 1 :name "John" :lastname "Smith"}
-                                                                        {:id 3 :name "Bob" :lastname "Smith"}])
-               (edb/insert-collection! ctrl :entitydb :programming-language :programming-language/web [{:id 1 :name :javascript}
-                                                                                                       {:id 2 :name :clojurescript}])
-               (edb/insert-collection! ctrl :entitydb :programming-language :programming-language/mobile [{:id 3 :name :swift}])
-               (edb/insert-collection! ctrl :entitydb :programming-language :programming-language/machine-learning [{:id 4 :name :python}])
-               (edb/insert-collection! ctrl :entitydb :user :user/friends [{:id 1 :username "Brada"} {:id 2 :username "MaxI"}])
-               (ctrl/dispatch ctrl :test :print-entity-state))))
+             (println "----------------> INSERT COLLECTION")
+             (edb/insert-collection! ctrl :entitydb :user :user/list [{:id 1 :name "John" :lastname "Smith"}
+                                                                      {:id 3 :name "Bob" :lastname "Smith"}])
+             (edb/insert-collection! ctrl :entitydb :programming-language :programming-language/web [{:id 1 :name :javascript}
+                                                                                                     {:id 2 :name :clojurescript}])
+             (edb/insert-collection! ctrl :entitydb :programming-language :programming-language/mobile [{:id 3 :name :swift}])
+             (edb/insert-collection! ctrl :entitydb :programming-language :programming-language/machine-learning [{:id 4 :name :python}])
+             (edb/insert-collection! ctrl :entitydb :user :user/friends [{:id 1 :username "Brada"} {:id 2 :username "MaxI"}])
+             (ctrl/dispatch ctrl :test :print-entity-state)))
 
 (def remove-named
   (pipeline! [value {:keys [deps-state* state*] :as ctrl}]
-             (let [entitydb (:entitydb @deps-state*)]
-               (println "----------------> REMOVE NAMED")
-               (edb/remove-named! ctrl :entitydb :user/current)
-               (p/delay 3000)
-               (ctrl/dispatch ctrl :test :print-entity-state))))
+             (println "----------------> REMOVE NAMED")
+             (edb/remove-named! ctrl :entitydb :user/current)
+             (p/delay 3000)
+             (ctrl/dispatch ctrl :test :print-entity-state)))
 
 (def remove-entity
   (pipeline! [value {:keys [deps-state* state*] :as ctrl}]
-             (let [entitydb (:entitydb @deps-state*)]
-               (println "----------------> REMOVE ENTITY")
-               (edb/remove-entity! ctrl :entitydb :user 1)
-               (p/delay 3000)
-               (ctrl/dispatch ctrl :test :print-entity-state))))
+             (println "----------------> REMOVE ENTITY")
+             (edb/remove-entity! ctrl :entitydb :user 1)
+             (p/delay 3000)
+             (ctrl/dispatch ctrl :test :print-entity-state)))
 
 (def schema-test
   (pipeline! [value {:keys [deps-state* state*] :as ctrl}]
-             (let [entitydb (:entitydb @deps-state*)]
-               (println "----------------> SCHEMA TEST")
-               (edb/insert-named! ctrl :entitydb :user :user/current {:id 1 :name "Domagoj" :lastname "Marusic"
+             (println "----------------> SCHEMA TEST")
+             (edb/insert-named! ctrl :entitydb :user :user/current {:id 1 :name "Domagoj" :lastname "Marusic"
                                                                          ;:languages [{:id 1 :language :clojure}
                                                                          ;            {:id 2 :language :javascript}]
-                                                                      :programming-language [{:id 1} {:id 3}]})
-               (ctrl/dispatch ctrl :test :print-entity-state))))
+                                                                    :programming-language [{:id 1} {:id 3}]})
+             (ctrl/dispatch ctrl :test :print-entity-state)))
 
 ;; DATASCRIPT EXAMPLES
 (def batman
@@ -360,4 +355,3 @@
 
 (defmethod ctrl/derive-state :test [_ state _]
   state)
-
