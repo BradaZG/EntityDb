@@ -26,7 +26,8 @@
                (l/pp "PPP" (edb/get-entity entitydb :programming-language 1 [(edb/reverse-include :user)]))
                (l/pp "RRR" (edb/get-named entitydb :user/current [(edb/include :programming-languages)]))
                (l/pp "SSS" (edb/get-entity-from-ident entitydb {:type :user, :id 1}))
-               (l/pp "TTT" (edb/get-entities-from-idents entitydb (edb/get-idents-for-collection entitydb :user/list))))))
+               (l/pp "TTT1" (edb/get-entities-from-idents entitydb [{:type :user, :id 1} {:type :user, :id 3}]))
+               (l/pp "TTT2" (edb/get-entities-from-idents entitydb (edb/get-idents-for-collection entitydb :user/list))))))
 
 (def insert-named
   (pipeline! [value {:keys [deps-state* state*] :as ctrl}]
